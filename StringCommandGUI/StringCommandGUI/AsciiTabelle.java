@@ -43,8 +43,8 @@ public class AsciiTabelle {
         return isPrintableChar(in)? Character.toString(in): in < controlCharacters.length? controlCharacters[in] : "-";
     }
 
-    public static String produceHeader(int row, int max) {
-        return String.format("Dec%1$s│ Bin%2$s│ Hx%3$s│ Oct%4$s│ Char  \t\t".repeat(row) + "\n",
+    public static String produceHeader(int column, int max) {
+        return String.format("Dec%1$s│ Bin%2$s│ Hx%3$s│ Oct%4$s│ Char  \t\t".repeat(column) + "\n",
                 " ".repeat(nextpower(max, 10)-2),
                 " ".repeat(nextpower(max, 2)-2),
                 " ".repeat(nextpower(max, 16)-1),
@@ -79,19 +79,19 @@ public class AsciiTabelle {
 
     /**
      * Gibt eine formatierte ASCII-Tabelle zurück
-     * @param row Anzahl der Reihen
+     * @param column Anzahl der Reihen
      * @param max Der maximale Char der ausgegeben werden soll
      * @return Formatierte Tabelle
      */
-    public static String table(int row, int max, ColorScheme scheme) {
+    public static String table(int column, int max, ColorScheme scheme) {
 
         StringBuilder out = new StringBuilder();
 
-        out.append(produceHeader(row, max));
+        out.append(produceHeader(column, max));
 
-        for (int a = 0; a < max / row; a++)
-            for (int b = 0; b < row; b++)
-                out.append(produceCell(a + b * (max / row), max, scheme)).append(b == row - 1 ? "\n" : "\t\t");
+        for (int a = 0; a < max / column; a++)
+            for (int b = 0; b < column; b++)
+                out.append(produceCell(a + b * (max / column), max, scheme)).append(b == column - 1 ? "\n" : "\t\t");
 
         return out.toString();
     }

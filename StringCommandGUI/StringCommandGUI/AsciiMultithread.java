@@ -1,23 +1,22 @@
 package StringCommandGUI;
 
-import java.awt.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.*;
 
 public class AsciiMultithread {
 
-    public static String table(int row, int max) {
+    public static String table(int column, int max) {
 
         StringBuilder out = new StringBuilder();
 
-        Future[] futures = new Future[max/row + 1];
+        Future[] futures = new Future[max/column + 1];
 
-        ThreadPoolExecutor es = (ThreadPoolExecutor) Executors.newFixedThreadPool(max/row + 1);
-        futures[0] = es.submit(() -> AsciiTabelle.produceHeader(row, max));
+        ThreadPoolExecutor es = (ThreadPoolExecutor) Executors.newFixedThreadPool(max/column + 1);
+        futures[0] = es.submit(() -> AsciiTabelle.produceHeader(column, max));
 
-        for (int a = 0; a < max / row; a++) {
-            AsciiRowRunner runner = new AsciiRowRunner(row , max, a);
+        for (int a = 0; a < max / column; a++) {
+            AsciiColumnRunner runner = new AsciiColumnRunner(column , max, a);
             futures[a+1] = es.submit(runner::generateCell);
         }
 
