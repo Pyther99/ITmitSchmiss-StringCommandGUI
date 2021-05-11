@@ -1,5 +1,10 @@
+package StringCommandGUI;
+
 import java.nio.charset.CharacterCodingException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class StringBefehle {
     /**
@@ -132,38 +137,53 @@ public class StringBefehle {
         String out = "";
 
         for (int i = 0; i < in.length(); i++) {
+
             // Erhöht den char bei Position i um 1 und konvertiert diesen wieder zu char
             out += (char) (in.charAt(i) + 1);
+
         }
         return out;
     }
 
     /**
-     * StringBuilder Implementation von zeichenErhoehen()
+     * Naive StringBuilder Implementation von zeichenErhoehen()
      */
     public static String zeichenErhoehenStringBuilder(String in) {
+
         StringBuilder out = new StringBuilder();
+
         for (int i = 0; i < in.length(); i++) {
             out.append((char) (in.charAt(i) + 1));
         }
+
         return out.toString();
     }
 
+    /**
+     * Erhöht einen Buchstaben innerhalb von 2 Buchstabengrenzen. Macht keine Inputvalidation.
+     * @param a Grenze 1
+     * @param b Grenze 2
+     * @param c Zu erhoehender Buchstabe
+     * @return Erhöhter Buchstabe
+     */
     private static Character moduloCharErhoehung(Character a, Character b, Character c) {
+
         return (char) ((c + 1 - a) % (b - a) + a);
     }
 
     private static Character erhoehezeichen(Character c) throws CharacterCodingException {
-        if (Character.isWhitespace(c) || c == '.' || c == ',') {
-            // Filter für Satzzeichen
+
+        if (Character.isWhitespace(c) || c == '.' || c == ',') { // Filter für Satzzeichen
             return c;
-        } else if (c >= 'a' && c <= 'z') {
-            // Kleinbuchstaben
+
+        } else if (c >= 'a' && c <= 'z') { // Kleinbuchstaben
             return moduloCharErhoehung('a', 'z', c);
-        } else if (c >= 'A' && c <= 'Z') {
-            // Großbuchstaben
+
+        } else if (c >= 'A' && c <= 'Z') { // Großbuchstaben
             return moduloCharErhoehung('A', 'Z', c);
+
         }
+
         // Falls der Buchstabe kein Satzzeichen und kein Buchstabe des Lateinischen Alphabetes ist, wird eine
         // Exception gweorfen
         throw new CharacterCodingException();
@@ -173,15 +193,44 @@ public class StringBefehle {
      * Erhoeht jeden Character des Eingabestrings um 1, beachtet dabei die Alphabetsgrenzen: Z + 1 -> A
      */
     public static String zeichenErhoehenIntelligent(String in) {
+
         StringBuilder out = new StringBuilder();
+
         for (int i = 0; i < in.length(); i++) {
+
             try {
                 out.append(erhoehezeichen(in.charAt(i)));
             } catch (CharacterCodingException e) {
                 return "Diese Funktion akzeptiert nur Buchstaben aus dem römischen Alphabet und Leerzeichen!";
             }
+
         }
         return out.toString();
+    }
+
+    public static String asciiTabelle(String in) {
+        int max;
+        try {
+            max = Integer.parseInt(in);
+        } catch (NumberFormatException e) {
+            max = 127;
+        }
+        return AsciiTabelle.table(1, max, new ColorScheme());
+    }
+
+    private static final String grundText = "Drei Chinesen mit dem Kontrabass\nsaßen auf der Straße und erzählten sich was.\nDa kam die Polizei, fragt‚ Was ist denn das?‘\nDrei Chinesen mit dem Kontrabass.";
+    private static final String[] vokale = new String[]{"a", "e", "i", "o", "u", "ä", "ü", "ö"};
+
+    public static String chinesenKomplex(String in) {
+        String reg = "[a|e|i|o|u|ä|ü|ö]+";
+        String replaceVokal = in.matches(reg)?in:"e";
+        return grundText.replaceAll(reg, replaceVokal);
+    }
+
+    public static String chinesenStream(String in) {
+        String replaceVokal = Arrays.asList(vokale).contains(in)?in:"e";
+        String reg = "("+Arrays.stream(vokale).collect(Collectors.joining("|"))+")+";
+        return grundText.replaceAll(reg, replaceVokal);
     }
 
 }
